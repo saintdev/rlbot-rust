@@ -30,3 +30,7 @@ winproc = "0.6.2"
 default = ["nalgebra"]
 nalgebra = ["na"]
 strict = []
+generate-ffi = []
+
+[build-dependencies]
+bindgen = "0.51.1"
