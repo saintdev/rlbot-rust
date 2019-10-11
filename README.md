@@ -125,67 +125,15 @@ Bindings are generated with [rust-bindgen]. Those docs are required reading.
 
 [rust-bindgen]: https://rust-lang.github.io/rust-bindgen/
 
-After bindgen and its prerequisites are installed and working, run this
-delightfully short command:
+After bindgen and its prerequisites are installed and working, run:
 
 ```sh
-rlbot=<absolute-path-to-rlbot>
-bindgen \
-    cpp/rlbot.hpp \
-    -o src/ffi.rs \
-    --disable-name-namespacing \
-    --no-layout-tests \
-    --default-enum-style rust \
-    --with-derive-default \
-    --raw-line '#![allow(non_camel_case_types, non_snake_case, missing_docs)]' \
-    --whitelist-function BallPrediction::GetBallPrediction \
-    --whitelist-function BallPrediction::GetBallPredictionStruct \
-    --whitelist-function GameFunctions::Free \
-    --whitelist-function GameFunctions::SetGameState \
-    --whitelist-function GameFunctions::StartMatch \
-    --whitelist-function GameFunctions::StartMatchFlatbuffer \
-    --whitelist-function GameFunctions::UpdateFieldInfoFlatbuffer \
-    --whitelist-function GameFunctions::UpdateFieldInfo \
-    --whitelist-function GameFunctions::UpdateLiveDataPacketFlatbuffer \
-    --whitelist-function GameFunctions::UpdateLiveDataPacket \
-    --whitelist-function GameFunctions::UpdateRigidBodyTickFlatbuffer \
-    --whitelist-function GameFunctions::UpdateRigidBodyTick \
-    --whitelist-function GameFunctions::SendQuickChat \
-    --whitelist-function GameFunctions::SendChat \
-    --whitelist-function GameFunctions::UpdatePlayerInput \
-    --whitelist-function GameFunctions::UpdatePlayerInputFlatbuffer \
-    --whitelist-function Interface::IsInitialized \
-    --whitelist-function RenderFunctions::RenderGroup \
-    -- \
-    -fdeclspec \
-    -I "$rlbot"/src/main/cpp/RLBotInterface/RLBotInterface \
-    -I "$rlbot"/src/main/cpp/RLBotInterface/RLBotMessages
+make RLBOT_DIR="<path-to-rlbot>" ffi
 ```
 
-It should output errors in white text. Modify RLBot's source to fix the errors.
+Setting `RLBOT_DIR` is optional and defaults to "../RLBot".
 
-If on an OS that uses forward slashes (ie not Windows), this can quickly
-alleviate some of the pain, run from the `RLBotInterface` directory:
-
-```sh
-find . | xargs perl -pi -e 's/([\w\.])\\(\w)/$1\/$2/g'
-```
-
-Commenting out includes that may fail to resolve:
-
-```sh
-find . | xargs perl -pi -e 's/\#include \<Windows.h\>/\/\/<Windows.h>/g'
-```
-
-For any problematic references to boost, it will be easiest to just purge
-indiscriminately. You may have to remove other things, like everything to do
-with `MessageStorage`, `GameInput`, `RenderOutput` and `CallbackOutput`. Keep
-running the above bindgen command and fixing errors (fun times!). After you've
-subjected yourself to enough pain, it will run successfully and output more
-errors, but in red text this time. As long as the errors are in red, that means
-it worked!
-
-Now open the resulting file (`src/ffi.rs`) and delete all the `extern "C" pub
-fn` declarations at the end. Since the DLL is actually loaded using this
-crate's `dll` module, there's no sense exposing the non-working functions—it
-would just lead to confusion.
+Should it output any errors in white text, modify RLBot's source to fix
+the errors. When the command completes successfully, you will have 
+errors in red text. As long as the errors are in red, that means it
+worked!
