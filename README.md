@@ -109,12 +109,11 @@ Get the most recent [flatbuffer schema]. Then compile the schema like so from
 this project's root:
 
 ```sh
-flatc -o src --rust rlbot.fbs
-cargo fix --allow-dirty
-cargo +nightly fmt
+make RLBOT_DIR="<path-to-rlbot>" fbs
 ```
 
-This will update the `src/rlbot_generated.rs` file.
+This will update the `src/rlbot_generated.rs` file. Setting `RLBOT_DIR`
+is optional and defaults to "../RLBot".
 
 [build flatc]: https://google.github.io/flatbuffers/flatbuffers_guide_building.html
 [flatbuffer schema]: https://github.com/RLBot/RLBot/blob/master/src/main/flatbuffers/rlbot.fbs

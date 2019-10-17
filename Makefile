@@ -5,8 +5,9 @@ help:
 	@echo ""
 	@echo "Targets:"
 	@echo "    ffi        Generate ffi bindings from RLBot headers using rust-bindgen"
+	@echo "    fbs        Generate Flatbuffer bindings"
 
-.PHONY: ffi help
+.PHONY: fbs ffi help
 
 src/ffi.rs: ffi
 
@@ -35,3 +36,13 @@ ffi: cpp/rlbot.hpp
 		-I "$(RLBOT_DIR)"/src/main/cpp/RLBotInterface/src/RLBotInterface \
 		-I "$(RLBOT_DIR)"/src/main/cpp/RLBotInterface/src/RLBotMessages \
 		-I "$(RLBOT_DIR)"/src/generated/cpp/flatbuffers
+
+src/rlbot_generated.rs: fbs
+
+fbs: $(RLBOT_DIR)/src/main/flatbuffers/rlbot.fbs
+	flatc \
+		--rust \
+		-o src \
+		$<
+	cargo fix --allow-dirty
+	cargo +nightly fmt
