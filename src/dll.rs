@@ -18,11 +18,7 @@ type SetGameState = extern "C" fn(
     gameStateData: *mut ::std::os::raw::c_void,
     size: ::std::os::raw::c_int,
 ) -> RLBotCoreStatus;
-type StartMatch = extern "C" fn(
-    matchSettings: MatchSettings,
-    callback: CallbackFunction,
-    pID: *mut ::std::os::raw::c_uint,
-) -> RLBotCoreStatus;
+type StartMatch = extern "C" fn(matchSettings: MatchSettings) -> RLBotCoreStatus;
 type StartMatchFlatbuffer = extern "C" fn(
     startMatchSettings: *mut ::std::os::raw::c_void,
     size: ::std::os::raw::c_int,
@@ -35,8 +31,6 @@ type SendChat = extern "C" fn(
     quickChatPreset: QuickChatPreset,
     playerIndex: ::std::os::raw::c_int,
     bTeam: bool,
-    callback: CallbackFunction,
-    pID: *mut ::std::os::raw::c_uint,
 ) -> RLBotCoreStatus;
 type UpdatePlayerInput =
     extern "C" fn(playerInput: PlayerInput, playerIndex: ::std::os::raw::c_int) -> RLBotCoreStatus;

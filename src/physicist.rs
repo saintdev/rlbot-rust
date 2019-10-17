@@ -57,8 +57,8 @@ impl<'a> Physicist<'a> {
     pub fn try_next(&mut self) -> Result<Option<ffi::RigidBodyTick>, Box<dyn Error>> {
         let mut result = unsafe { mem::uninitialized() };
         self.rlbot.interface().update_rigid_body_tick(&mut result)?;
-        if result.Ball.State.Frame != self.prev_ball_frame {
-            self.prev_ball_frame = result.Ball.State.Frame;
+        if result.ball.state.frame != self.prev_ball_frame {
+            self.prev_ball_frame = result.ball.state.frame;
             Ok(Some(result))
         } else {
             Ok(None)

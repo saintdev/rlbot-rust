@@ -2,84 +2,109 @@
 
 #![allow(non_camel_case_types, non_snake_case, missing_docs)]
 
-#[repr(i32)]
-#[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
-pub enum RLBotCoreStatus {
-    Success = 0,
-    BufferOverfilled = 1,
-    MessageLargerThanMax = 2,
-    InvalidNumPlayers = 3,
-    InvalidBotSkill = 4,
-    InvalidHumanIndex = 5,
-    InvalidName = 6,
-    InvalidTeam = 7,
-    InvalidTeamColorID = 8,
-    InvalidCustomColorID = 9,
-    InvalidGameValues = 10,
-    InvalidThrottle = 11,
-    InvalidSteer = 12,
-    InvalidPitch = 13,
-    InvalidYaw = 14,
-    InvalidRoll = 15,
-    InvalidPlayerIndex = 16,
-    InvalidQuickChatPreset = 17,
-    InvalidRenderType = 18,
-    QuickChatRateExceeded = 19,
-    NotInitialized = 20,
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct ByteBuffer {
+    pub ptr: *mut ::std::os::raw::c_void,
+    pub size: ::std::os::raw::c_int,
+}
+impl Default for ByteBuffer {
+    fn default() -> Self {
+        unsafe { ::std::mem::zeroed() }
+    }
 }
 #[repr(C)]
 #[derive(Debug, Default, Copy, Clone)]
 pub struct ScoreInfo {
-    pub Score: ::std::os::raw::c_int,
-    pub Goals: ::std::os::raw::c_int,
-    pub OwnGoals: ::std::os::raw::c_int,
-    pub Assists: ::std::os::raw::c_int,
-    pub Saves: ::std::os::raw::c_int,
-    pub Shots: ::std::os::raw::c_int,
-    pub Demolitions: ::std::os::raw::c_int,
+    pub score: ::std::os::raw::c_int,
+    pub goals: ::std::os::raw::c_int,
+    pub ownGoals: ::std::os::raw::c_int,
+    pub assists: ::std::os::raw::c_int,
+    pub saves: ::std::os::raw::c_int,
+    pub shots: ::std::os::raw::c_int,
+    pub demolitions: ::std::os::raw::c_int,
 }
 #[repr(C)]
 #[derive(Debug, Default, Copy, Clone)]
 pub struct Vector3 {
-    pub X: f32,
-    pub Y: f32,
-    pub Z: f32,
+    pub x: f32,
+    pub y: f32,
+    pub z: f32,
 }
 #[repr(C)]
 #[derive(Debug, Default, Copy, Clone)]
 pub struct Rotator {
-    pub Pitch: f32,
-    pub Yaw: f32,
-    pub Roll: f32,
+    pub pitch: f32,
+    pub yaw: f32,
+    pub roll: f32,
+}
+#[repr(C)]
+#[derive(Debug, Default, Copy, Clone)]
+pub struct BoxShape {
+    pub length: f32,
+    pub width: f32,
+    pub height: f32,
+}
+#[repr(C)]
+#[derive(Debug, Default, Copy, Clone)]
+pub struct SphereShape {
+    pub diameter: f32,
+}
+#[repr(C)]
+#[derive(Debug, Default, Copy, Clone)]
+pub struct CylinderShape {
+    pub diameter: f32,
+    pub height: f32,
+}
+#[repr(u32)]
+#[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
+pub enum CollisionShapeType {
+    BoxType = 0,
+    SphereType = 1,
+    CylinderType = 2,
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct CollisionShape {
+    pub type_: CollisionShapeType,
+    pub box_: BoxShape,
+    pub sphere: SphereShape,
+    pub cylinder: CylinderShape,
+}
+impl Default for CollisionShape {
+    fn default() -> Self {
+        unsafe { ::std::mem::zeroed() }
+    }
 }
 #[repr(C)]
 #[derive(Debug, Default, Copy, Clone)]
 pub struct Physics {
-    pub Location: Vector3,
-    pub Rotation: Rotator,
-    pub Velocity: Vector3,
-    pub AngularVelocity: Vector3,
+    pub location: Vector3,
+    pub rotation: Rotator,
+    pub velocity: Vector3,
+    pub angularVelocity: Vector3,
 }
 #[repr(C)]
 #[derive(Debug, Default, Copy, Clone)]
 pub struct PlayerInfo {
-    pub Physics: Physics,
-    pub Score: ScoreInfo,
-    pub Demolished: bool,
-    pub OnGround: bool,
-    pub SuperSonic: bool,
-    pub Bot: bool,
-    pub Jumped: bool,
-    pub DoubleJumped: bool,
-    pub Name: [u16; 32usize],
-    pub Team: ::std::os::raw::c_uchar,
-    pub Boost: ::std::os::raw::c_int,
+    pub physics: Physics,
+    pub score: ScoreInfo,
+    pub demolished: bool,
+    pub onGround: bool,
+    pub superSonic: bool,
+    pub bot: bool,
+    pub jumped: bool,
+    pub doubleJumped: bool,
+    pub name: [u32; 32usize],
+    pub team: ::std::os::raw::c_uchar,
+    pub boost: ::std::os::raw::c_int,
+    pub hitbox: BoxShape,
 }
 #[repr(C)]
 #[derive(Debug, Default, Copy, Clone)]
 pub struct BoostInfo {
-    pub Active: bool,
-    pub Timer: f32,
+    pub active: bool,
+    pub timer: f32,
 }
 #[repr(C)]
 #[derive(Debug, Default, Copy, Clone)]
@@ -89,36 +114,37 @@ pub struct TileInfo {
 #[repr(C)]
 #[derive(Debug, Default, Copy, Clone)]
 pub struct TeamInfo {
-    pub TeamIndex: ::std::os::raw::c_int,
-    pub Score: ::std::os::raw::c_int,
+    pub teamIndex: ::std::os::raw::c_int,
+    pub score: ::std::os::raw::c_int,
 }
 #[repr(C)]
 #[derive(Debug, Default, Copy, Clone)]
 pub struct Touch {
-    pub PlayerName: [u16; 32usize],
-    pub TimeSeconds: f32,
-    pub HitLocation: Vector3,
-    pub HitNormal: Vector3,
-    pub Team: ::std::os::raw::c_int,
+    pub playerName: [u32; 32usize],
+    pub timeSeconds: f32,
+    pub hitLocation: Vector3,
+    pub hitNormal: Vector3,
+    pub team: ::std::os::raw::c_int,
+    pub playerIndex: ::std::os::raw::c_int,
 }
 #[repr(C)]
 #[derive(Debug, Default, Copy, Clone)]
 pub struct DropShotBallInfo {
-    pub AbsorbedForce: f32,
-    pub DamageIndex: ::std::os::raw::c_int,
-    pub ForceAccumRecent: f32,
+    pub absorbedForce: f32,
+    pub damageIndex: ::std::os::raw::c_int,
+    pub forceAccumRecent: f32,
 }
 #[repr(C)]
 #[derive(Debug, Default, Copy, Clone)]
 pub struct Slice {
-    pub Physics: Physics,
-    pub GameSeconds: f32,
+    pub physics: Physics,
+    pub gameSeconds: f32,
 }
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub struct BallPredictionPacket {
-    pub Slice: [Slice; 360usize],
-    pub NumSlices: ::std::os::raw::c_int,
+    pub slice: [Slice; 360usize],
+    pub numSlices: ::std::os::raw::c_int,
 }
 impl Default for BallPredictionPacket {
     fn default() -> Self {
@@ -126,38 +152,44 @@ impl Default for BallPredictionPacket {
     }
 }
 #[repr(C)]
-#[derive(Debug, Default, Copy, Clone)]
+#[derive(Debug, Copy, Clone)]
 pub struct BallInfo {
-    pub Physics: Physics,
-    pub LatestTouch: Touch,
-    pub DropShotInfo: DropShotBallInfo,
+    pub physics: Physics,
+    pub latestTouch: Touch,
+    pub dropShotInfo: DropShotBallInfo,
+    pub collisionShape: CollisionShape,
+}
+impl Default for BallInfo {
+    fn default() -> Self {
+        unsafe { ::std::mem::zeroed() }
+    }
 }
 #[repr(C)]
 #[derive(Debug, Default, Copy, Clone)]
 pub struct GameInfo {
-    pub TimeSeconds: f32,
-    pub GameTimeRemaining: f32,
-    pub OverTime: bool,
-    pub UnlimitedTime: bool,
-    pub RoundActive: bool,
-    pub KickoffPause: bool,
-    pub MatchEnded: bool,
-    pub WorldGravityZ: f32,
-    pub GameSpeed: f32,
+    pub timeSeconds: f32,
+    pub gameTimeRemaining: f32,
+    pub overTime: bool,
+    pub unlimitedTime: bool,
+    pub roundActive: bool,
+    pub kickoffPause: bool,
+    pub matchEnded: bool,
+    pub worldGravityZ: f32,
+    pub gameSpeed: f32,
 }
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub struct LiveDataPacket {
-    pub GameCars: [PlayerInfo; 10usize],
-    pub NumCars: ::std::os::raw::c_int,
-    pub GameBoosts: [BoostInfo; 50usize],
-    pub NumBoosts: ::std::os::raw::c_int,
-    pub GameBall: BallInfo,
-    pub GameInfo: GameInfo,
-    pub GameTiles: [TileInfo; 200usize],
-    pub NumTiles: ::std::os::raw::c_int,
-    pub Teams: [TeamInfo; 2usize],
-    pub NumTeams: ::std::os::raw::c_int,
+    pub gameCars: [PlayerInfo; 64usize],
+    pub numCars: ::std::os::raw::c_int,
+    pub gameBoosts: [BoostInfo; 50usize],
+    pub numBoosts: ::std::os::raw::c_int,
+    pub gameBall: BallInfo,
+    pub gameInfo: GameInfo,
+    pub gameTiles: [TileInfo; 200usize],
+    pub numTiles: ::std::os::raw::c_int,
+    pub teams: [TeamInfo; 2usize],
+    pub numTeams: ::std::os::raw::c_int,
 }
 impl Default for LiveDataPacket {
     fn default() -> Self {
@@ -167,23 +199,25 @@ impl Default for LiveDataPacket {
 #[repr(C)]
 #[derive(Debug, Default, Copy, Clone)]
 pub struct GoalInfo {
-    pub TeamNum: ::std::os::raw::c_uchar,
-    pub Location: Vector3,
-    pub Direction: Vector3,
+    pub teamNum: ::std::os::raw::c_uchar,
+    pub location: Vector3,
+    pub direction: Vector3,
+    pub width: f32,
+    pub height: f32,
 }
 #[repr(C)]
 #[derive(Debug, Default, Copy, Clone)]
 pub struct BoostPad {
-    pub Location: Vector3,
-    pub FullBoost: bool,
+    pub location: Vector3,
+    pub fullBoost: bool,
 }
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub struct FieldInfo {
-    pub BoostPads: [BoostPad; 50usize],
-    pub NumBoosts: ::std::os::raw::c_int,
-    pub Goals: [GoalInfo; 200usize],
-    pub NumGoals: ::std::os::raw::c_int,
+    pub boostPads: [BoostPad; 50usize],
+    pub numBoosts: ::std::os::raw::c_int,
+    pub goals: [GoalInfo; 200usize],
+    pub numGoals: ::std::os::raw::c_int,
 }
 impl Default for FieldInfo {
     fn default() -> Self {
@@ -193,35 +227,35 @@ impl Default for FieldInfo {
 #[repr(C)]
 #[derive(Debug, Default, Copy, Clone)]
 pub struct PlayerConfiguration {
-    pub Bot: bool,
-    pub RLBotControlled: bool,
-    pub BotSkill: f32,
-    pub HumanIndex: ::std::os::raw::c_int,
-    pub Name: [u16; 32usize],
-    pub Team: ::std::os::raw::c_uchar,
-    pub TeamColorID: ::std::os::raw::c_uchar,
-    pub CustomColorID: ::std::os::raw::c_uchar,
-    pub CarID: ::std::os::raw::c_int,
-    pub DecalID: ::std::os::raw::c_int,
-    pub WheelsID: ::std::os::raw::c_int,
-    pub BoostID: ::std::os::raw::c_int,
-    pub AntennaID: ::std::os::raw::c_int,
-    pub HatID: ::std::os::raw::c_int,
-    pub PaintFinishID: ::std::os::raw::c_int,
-    pub CustomFinishID: ::std::os::raw::c_int,
-    pub EngineAudioID: ::std::os::raw::c_int,
-    pub TrailsID: ::std::os::raw::c_int,
-    pub GoalExplosionID: ::std::os::raw::c_int,
-    pub CarPaintID: ::std::os::raw::c_int,
-    pub DecalPaintID: ::std::os::raw::c_int,
-    pub WheelsPaintID: ::std::os::raw::c_int,
-    pub BoostPaintID: ::std::os::raw::c_int,
-    pub AntennaPaintID: ::std::os::raw::c_int,
-    pub HatPaintID: ::std::os::raw::c_int,
-    pub TrailsPaintID: ::std::os::raw::c_int,
-    pub GoalExplosionPaintID: ::std::os::raw::c_int,
+    pub bot: bool,
+    pub rlbotControlled: bool,
+    pub botSkill: f32,
+    pub humanIndex: ::std::os::raw::c_int,
+    pub name: [u32; 32usize],
+    pub team: ::std::os::raw::c_uchar,
+    pub teamColorID: ::std::os::raw::c_uchar,
+    pub customColorID: ::std::os::raw::c_uchar,
+    pub carID: ::std::os::raw::c_int,
+    pub decalID: ::std::os::raw::c_int,
+    pub wheelsID: ::std::os::raw::c_int,
+    pub boostID: ::std::os::raw::c_int,
+    pub antennaID: ::std::os::raw::c_int,
+    pub hatID: ::std::os::raw::c_int,
+    pub paintFinishID: ::std::os::raw::c_int,
+    pub customFinishID: ::std::os::raw::c_int,
+    pub engineAudioID: ::std::os::raw::c_int,
+    pub trailsID: ::std::os::raw::c_int,
+    pub goalExplosionID: ::std::os::raw::c_int,
+    pub carPaintID: ::std::os::raw::c_int,
+    pub decalPaintID: ::std::os::raw::c_int,
+    pub wheelsPaintID: ::std::os::raw::c_int,
+    pub boostPaintID: ::std::os::raw::c_int,
+    pub antennaPaintID: ::std::os::raw::c_int,
+    pub hatPaintID: ::std::os::raw::c_int,
+    pub trailsPaintID: ::std::os::raw::c_int,
+    pub goalExplosionPaintID: ::std::os::raw::c_int,
 }
-#[repr(i32)]
+#[repr(u32)]
 #[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
 pub enum GameMode {
     Soccer = 0,
@@ -230,7 +264,7 @@ pub enum GameMode {
     Hockey = 3,
     Rumble = 4,
 }
-#[repr(i32)]
+#[repr(u32)]
 #[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
 pub enum GameMap {
     DFHStadium = 0,
@@ -376,6 +410,7 @@ pub enum RumbleOption {
     Destruction_Derby = 4,
     Spring_Loaded = 5,
     Spikes_Only = 6,
+    Spike_Rush = 7,
 }
 #[repr(i32)]
 #[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
@@ -413,38 +448,47 @@ pub enum RespawnTimeOption {
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
 pub struct MutatorSettings {
-    pub MatchLength: MatchLength,
-    pub MaxScore: MaxScore,
-    pub OvertimeOptions: OvertimeOption,
-    pub SeriesLengthOptions: SeriesLengthOption,
-    pub GameSpeedOptions: GameSpeedOption,
-    pub BallMaxSpeedOptions: BallMaxSpeedOption,
-    pub BallTypeOptions: BallTypeOption,
-    pub BallWeightOptions: BallWeightOption,
-    pub BallSizeOptions: BallSizeOption,
-    pub BallBouncinessOptions: BallBouncinessOption,
-    pub BoostOptions: BoostOption,
-    pub RumbleOptions: RumbleOption,
-    pub BoostStrengthOptions: BoostStrengthOption,
-    pub GravityOptions: GravityOption,
-    pub DemolishOptions: DemolishOption,
-    pub RespawnTimeOptions: RespawnTimeOption,
+    pub matchLength: MatchLength,
+    pub maxScore: MaxScore,
+    pub overtimeOptions: OvertimeOption,
+    pub seriesLengthOptions: SeriesLengthOption,
+    pub gameSpeedOptions: GameSpeedOption,
+    pub ballMaxSpeedOptions: BallMaxSpeedOption,
+    pub ballTypeOptions: BallTypeOption,
+    pub ballWeightOptions: BallWeightOption,
+    pub ballSizeOptions: BallSizeOption,
+    pub ballBouncinessOptions: BallBouncinessOption,
+    pub boostOptions: BoostOption,
+    pub rumbleOptions: RumbleOption,
+    pub boostStrengthOptions: BoostStrengthOption,
+    pub gravityOptions: GravityOption,
+    pub demolishOptions: DemolishOption,
+    pub respawnTimeOptions: RespawnTimeOption,
 }
 impl Default for MutatorSettings {
     fn default() -> Self {
         unsafe { ::std::mem::zeroed() }
     }
 }
+#[repr(u32)]
+#[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
+pub enum ExistingMatchBehavior {
+    Restart_If_Different = 0,
+    Restart = 1,
+    Continue_And_Spawn = 2,
+}
 #[repr(C)]
-#[derive(Debug, Copy, Clone)]
+#[derive(Copy, Clone)]
 pub struct MatchSettings {
-    pub PlayerConfiguration: [PlayerConfiguration; 10usize],
-    pub NumPlayers: ::std::os::raw::c_int,
-    pub GameMode: GameMode,
-    pub GameMap: GameMap,
-    pub SkipReplays: bool,
-    pub InstantStart: bool,
-    pub MutatorSettings: MutatorSettings,
+    pub playerConfiguration: [PlayerConfiguration; 64usize],
+    pub numPlayers: ::std::os::raw::c_int,
+    pub gameMode: GameMode,
+    pub gameMap: GameMap,
+    pub skipReplays: bool,
+    pub instantStart: bool,
+    pub mutatorSettings: MutatorSettings,
+    pub existingMatchBehavior: ExistingMatchBehavior,
+    pub enableLockstep: bool,
 }
 impl Default for MatchSettings {
     fn default() -> Self {
@@ -454,16 +498,82 @@ impl Default for MatchSettings {
 #[repr(C)]
 #[derive(Debug, Default, Copy, Clone)]
 pub struct PlayerInput {
-    pub Throttle: f32,
-    pub Steer: f32,
-    pub Pitch: f32,
-    pub Yaw: f32,
-    pub Roll: f32,
-    pub Jump: bool,
-    pub Boost: bool,
-    pub Handbrake: bool,
+    pub throttle: f32,
+    pub steer: f32,
+    pub pitch: f32,
+    pub yaw: f32,
+    pub roll: f32,
+    pub jump: bool,
+    pub boost: bool,
+    pub handbrake: bool,
+    pub useItem: bool,
 }
-#[repr(i32)]
+#[repr(C)]
+#[derive(Debug, Default, Copy, Clone)]
+pub struct Quaternion {
+    pub x: f32,
+    pub y: f32,
+    pub z: f32,
+    pub w: f32,
+}
+#[repr(C)]
+#[derive(Debug, Default, Copy, Clone)]
+pub struct RigidBodyState {
+    pub frame: ::std::os::raw::c_int,
+    pub location: Vector3,
+    pub rotation: Quaternion,
+    pub velocity: Vector3,
+    pub angularVelocity: Vector3,
+}
+#[repr(C)]
+#[derive(Debug, Default, Copy, Clone)]
+pub struct PlayerRigidBodyState {
+    pub state: RigidBodyState,
+    pub input: PlayerInput,
+}
+#[repr(C)]
+#[derive(Debug, Default, Copy, Clone)]
+pub struct BallRigidBodyState {
+    pub state: RigidBodyState,
+}
+#[repr(C)]
+#[derive(Copy, Clone)]
+pub struct RigidBodyTick {
+    pub ball: BallRigidBodyState,
+    pub players: [PlayerRigidBodyState; 64usize],
+    pub numPlayers: ::std::os::raw::c_int,
+}
+impl Default for RigidBodyTick {
+    fn default() -> Self {
+        unsafe { ::std::mem::zeroed() }
+    }
+}
+#[repr(u32)]
+#[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
+pub enum RLBotCoreStatus {
+    Success = 0,
+    BufferOverfilled = 1,
+    MessageLargerThanMax = 2,
+    InvalidNumPlayers = 3,
+    InvalidBotSkill = 4,
+    InvalidHumanIndex = 5,
+    InvalidName = 6,
+    InvalidTeam = 7,
+    InvalidTeamColorID = 8,
+    InvalidCustomColorID = 9,
+    InvalidGameValues = 10,
+    InvalidThrottle = 11,
+    InvalidSteer = 12,
+    InvalidPitch = 13,
+    InvalidYaw = 14,
+    InvalidRoll = 15,
+    InvalidPlayerIndex = 16,
+    InvalidQuickChatPreset = 17,
+    InvalidRenderType = 18,
+    QuickChatRateExceeded = 19,
+    NotInitialized = 20,
+}
+#[repr(u32)]
 #[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
 pub enum QuickChatPreset {
     Information_IGotIt = 0,
@@ -525,53 +635,4 @@ pub enum QuickChatPreset {
     Custom_Compliments_GC = 56,
     Custom_Compliments_Pro = 57,
     MaxQuickChatPresets = 58,
-}
-pub type CallbackFunction = ::std::option::Option<
-    unsafe extern "C" fn(id: ::std::os::raw::c_uint, status: RLBotCoreStatus),
->;
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct ByteBuffer {
-    pub ptr: *mut ::std::os::raw::c_void,
-    pub size: ::std::os::raw::c_int,
-}
-impl Default for ByteBuffer {
-    fn default() -> Self {
-        unsafe { ::std::mem::zeroed() }
-    }
-}
-#[repr(C)]
-#[derive(Debug, Default, Copy, Clone)]
-pub struct Quaternion {
-    pub X: f32,
-    pub Y: f32,
-    pub Z: f32,
-    pub W: f32,
-}
-#[repr(C)]
-#[derive(Debug, Default, Copy, Clone)]
-pub struct RigidBodyState {
-    pub Frame: ::std::os::raw::c_int,
-    pub Location: Vector3,
-    pub Rotation: Quaternion,
-    pub Velocity: Vector3,
-    pub AngularVelocity: Vector3,
-}
-#[repr(C)]
-#[derive(Debug, Default, Copy, Clone)]
-pub struct PlayerRigidBodyState {
-    pub State: RigidBodyState,
-    pub Input: PlayerInput,
-}
-#[repr(C)]
-#[derive(Debug, Default, Copy, Clone)]
-pub struct BallRigidBodyState {
-    pub State: RigidBodyState,
-}
-#[repr(C)]
-#[derive(Debug, Default, Copy, Clone)]
-pub struct RigidBodyTick {
-    pub Ball: BallRigidBodyState,
-    pub Players: [PlayerRigidBodyState; 10usize],
-    pub NumPlayers: ::std::os::raw::c_int,
 }
