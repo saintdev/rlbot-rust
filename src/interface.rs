@@ -163,6 +163,28 @@ impl RLBotInterface {
         let status = (self.dll.get_ball_prediction_struct)(result);
         core_result(status)
     }
+
+    pub fn fresh_live_data_packet_flatbuffer<'fb>(
+        &self,
+        timeout_millis: c_int,
+        key: c_int,
+    ) -> Option<flat::GameTickPacket<'fb>> {
+        let byte_buffer = (self.dll.fresh_live_data_packet_flatbuffer)(timeout_millis, key);
+        get_flatbuffer::<flat::GameTickPacket<'_>>(byte_buffer)
+    }
+
+    #[deprecated(
+        note = "the struct-based methods are deprecated; use the flatbuffer equivalents instead"
+    )]
+    pub fn fresh_live_data_packet(
+        &self,
+        packet: &mut ffi::LiveDataPacket,
+        timeout_millis: c_int,
+        key: c_int,
+    ) -> Result<(), RLBotError> {
+        let status = (self.dll.fresh_live_data_packet)(packet, timeout_millis, key);
+        core_result(status)
+    }
 }
 
 fn core_result(status: ffi::RLBotCoreStatus) -> Result<(), RLBotError> {
@@ -207,6 +229,7 @@ mod tests {
         assert_send(interface.update_rigid_body_tick_flatbuffer());
         assert_send(interface.update_field_info_flatbuffer());
         assert_send(interface.get_ball_prediction());
+        assert_send(interface.fresh_live_data_packet_flatbuffer(0, 0));
         Ok(())
     }
 }

@@ -46,6 +46,13 @@ type IsInitialized = extern "C" fn() -> bool;
 type GetBallPrediction = extern "C" fn() -> ByteBuffer;
 type GetBallPredictionStruct =
     extern "C" fn(pBallPrediction: *mut BallPredictionPacket) -> RLBotCoreStatus;
+type FreshLiveDataPacketFlatbuffer =
+    extern "C" fn(timeoutMillis: ::std::os::raw::c_int, key: ::std::os::raw::c_int) -> ByteBuffer;
+type FreshLiveDataPacket = fn(
+    pLiveData: *mut LiveDataPacket,
+    timeoutMillis: ::std::os::raw::c_int,
+    key: ::std::os::raw::c_int,
+) -> RLBotCoreStatus;
 
 /// Tracks whether RLBot_Core_Interface has been loaded into this process.
 static INITIALIZED: AtomicBool = AtomicBool::new(false);
@@ -70,6 +77,8 @@ pub struct RLBotCoreInterface {
     pub is_initialized: IsInitialized,
     pub get_ball_prediction: GetBallPrediction,
     pub get_ball_prediction_struct: GetBallPredictionStruct,
+    pub fresh_live_data_packet_flatbuffer: FreshLiveDataPacketFlatbuffer,
+    pub fresh_live_data_packet: FreshLiveDataPacket,
 }
 
 impl RLBotCoreInterface {
@@ -110,6 +119,9 @@ impl RLBotCoreInterface {
                 is_initialized: *library.get(b"IsInitialized")?,
                 get_ball_prediction: *library.get(b"GetBallPrediction")?,
                 get_ball_prediction_struct: *library.get(b"GetBallPredictionStruct")?,
+                fresh_live_data_packet: *library.get(b"FreshLiveDataPacket")?,
+                fresh_live_data_packet_flatbuffer: *library
+                    .get(b"FreshLiveDataPacketFlatbuffer")?,
             })
         }
     }
