@@ -99,6 +99,8 @@ pub struct PlayerInfo {
     pub team: ::std::os::raw::c_uchar,
     pub boost: ::std::os::raw::c_int,
     pub hitbox: BoxShape,
+    pub hitboxOffset: Vector3,
+    pub spawnId: ::std::os::raw::c_int,
 }
 #[repr(C)]
 #[derive(Debug, Default, Copy, Clone)]
@@ -225,7 +227,18 @@ impl Default for FieldInfo {
     }
 }
 #[repr(C)]
-#[derive(Debug, Default, Copy, Clone)]
+pub struct Color {
+    pub r: u8,
+    pub g: u8,
+    pub b: u8,
+    pub a: u8,
+}
+impl Default for Color {
+    fn default() -> Self {
+        unsafe { ::std::mem::zeroed() }
+    }
+}
+#[repr(C)]
 pub struct PlayerConfiguration {
     pub bot: bool,
     pub rlbotControlled: bool,
@@ -254,6 +267,15 @@ pub struct PlayerConfiguration {
     pub hatPaintID: ::std::os::raw::c_int,
     pub trailsPaintID: ::std::os::raw::c_int,
     pub goalExplosionPaintID: ::std::os::raw::c_int,
+    pub useRgbLookup: bool,
+    pub primaryColorLookup: Color,
+    pub secondaryColorLookup: Color,
+    pub spawnId: ::std::os::raw::c_int,
+}
+impl Default for PlayerConfiguration {
+    fn default() -> Self {
+        unsafe { ::std::mem::zeroed() }
+    }
 }
 #[repr(u32)]
 #[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
@@ -305,13 +327,10 @@ pub enum GameMap {
     Hoops_DunkHouse = 35,
     DropShot_Core707 = 36,
     ThrowbackStadium = 37,
-    Workshop_Aerial_Map = 38,
-    Workshop_BeachVolley = 39,
-    Workshop_DribblingChallenge2 = 40,
-    Workshop_DribblingChallenge = 41,
-    Workshop_ObstacleCourse2 = 42,
-    Workshop_ObstacleCourse = 43,
-    Workshop_ShipYarr = 44,
+    ForbiddenTemple = 38,
+    RivalsArena = 39,
+    Farmstead_Night = 40,
+    SaltyShores_Night = 41,
 }
 #[repr(i32)]
 #[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
@@ -478,7 +497,6 @@ pub enum ExistingMatchBehavior {
     Continue_And_Spawn = 2,
 }
 #[repr(C)]
-#[derive(Copy, Clone)]
 pub struct MatchSettings {
     pub playerConfiguration: [PlayerConfiguration; 64usize],
     pub numPlayers: ::std::os::raw::c_int,
@@ -634,5 +652,10 @@ pub enum QuickChatPreset {
     Custom_Compliments_proud = 55,
     Custom_Compliments_GC = 56,
     Custom_Compliments_Pro = 57,
-    MaxQuickChatPresets = 58,
+    Custom_Excuses_Lag = 58,
+    Custom_Excuses_GhostInputs = 59,
+    Custom_Excuses_Rigged = 60,
+    Custom_Toxic_MafiaPlays = 61,
+    Custom_Exclamation_Yeet = 62,
+    MaxQuickChatPresets = 63,
 }

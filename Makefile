@@ -29,6 +29,7 @@ ffi: cpp/rlbot.hpp
 		--whitelist-type QuickChatPreset \
 		--whitelist-type CallbackFunction \
 		--no-copy ByteBuffer \
+		--blacklist-type __uint8_t \
 		$< \
 		-- \
 		-fdeclspec \
