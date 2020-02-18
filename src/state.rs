@@ -299,6 +299,8 @@ pub struct DesiredGameInfoState {
     pub world_gravity_z: Option<f32>,
     /// The game speed multiplier (`1.0` is normal speed).
     pub game_speed: Option<f32>,
+    paused: Option<bool>,
+    end_match: Option<bool>,
     non_exhaustive: (),
 }
 
@@ -320,15 +322,31 @@ impl DesiredGameInfoState {
         self
     }
 
+    /// Pause/unpause match
+    pub fn paused(mut self, paused: bool) -> Self {
+        self.paused = Some(paused);
+        self
+    }
+
+    /// End current match
+    pub fn end_match(mut self, end_match: bool) -> Self {
+        self.end_match = Some(end_match);
+        self
+    }
+
     fn serialize<'a>(
         &self,
         builder: &mut flatbuffers::FlatBufferBuilder<'a>,
     ) -> flatbuffers::WIPOffset<flat::DesiredGameInfoState<'a>> {
         let world_gravity_z = self.world_gravity_z.map(flat::Float::new);
         let game_speed = self.game_speed.map(flat::Float::new);
+        let paused = self.paused.map(flat::Bool::new);
+        let end_match = self.end_match.map(flat::Bool::new);
         let args = flat::DesiredGameInfoStateArgs {
             worldGravityZ: world_gravity_z.as_ref(),
             gameSpeed: game_speed.as_ref(),
+            paused: paused.as_ref(),
+            endMatch: end_match.as_ref(),
         };
         flat::DesiredGameInfoState::create(builder, &args)
     }

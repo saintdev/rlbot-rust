@@ -103,6 +103,8 @@ pub struct PlayerLoadout {
     trails_id: i32,
     goal_explosion_id: i32,
     loadout_paint: LoadoutPaint,
+    primary_color: Option<Color>,
+    secondary_color: Option<Color>,
 }
 
 impl PlayerLoadout {
@@ -180,6 +182,16 @@ impl PlayerLoadout {
         self
     }
 
+    pub fn primary_color(mut self, color: Option<Color>) -> Self {
+        self.primary_color = color;
+        self
+    }
+
+    pub fn secondary_color(mut self, color: Option<Color>) -> Self {
+        self.secondary_color = color;
+        self
+    }
+
     pub(crate) fn build<'fb>(
         &self,
         builder: &mut FlatBufferBuilder<'fb>,
@@ -199,6 +211,8 @@ impl PlayerLoadout {
             trailsId: self.trails_id,
             goalExplosionId: self.goal_explosion_id,
             loadoutPaint: Some(self.loadout_paint.build(builder)),
+            primaryColorLookup: self.primary_color.as_ref().map(|c| c.build(builder)),
+            secondaryColorLookup: self.secondary_color.as_ref().map(|c| c.build(builder)),
         };
         flat::PlayerLoadout::create(builder, &args)
     }
@@ -280,6 +294,50 @@ impl LoadoutPaint {
     }
 }
 
+#[derive(Default, Clone)]
+pub struct Color {
+    a: u8,
+    r: u8,
+    g: u8,
+    b: u8,
+}
+
+impl Color {
+    pub fn new() -> Self {
+        Self::default()
+    }
+
+    pub fn a(mut self, alpha: u8) -> Self {
+        self.a = alpha;
+        self
+    }
+
+    pub fn r(mut self, red: u8) -> Self {
+        self.r = red;
+        self
+    }
+
+    pub fn g(mut self, green: u8) -> Self {
+        self.g = green;
+        self
+    }
+
+    pub fn b(mut self, blue: u8) -> Self {
+        self.b = blue;
+        self
+    }
+
+    fn build<'fb>(&self, builder: &mut FlatBufferBuilder<'fb>) -> WIPOffset<flat::Color<'fb>> {
+        let args = flat::ColorArgs {
+            a: self.a,
+            r: self.r,
+            g: self.g,
+            b: self.b,
+        };
+        flat::Color::create(builder, &args)
+    }
+}
+
 /// Describes one of the players in a match.
 #[derive(Clone)]
 pub struct PlayerConfiguration<'a> {
@@ -287,6 +345,7 @@ pub struct PlayerConfiguration<'a> {
     pub name: &'a str,
     pub team: i32,
     pub loadout: PlayerLoadout,
+    spawn_id: i32,
     _non_exhaustive: (),
 }
 
@@ -297,6 +356,7 @@ impl<'a> PlayerConfiguration<'a> {
             name,
             team,
             loadout: PlayerLoadout::default(),
+            spawn_id: 0,
             _non_exhaustive: (),
         }
     }
@@ -321,6 +381,11 @@ impl<'a> PlayerConfiguration<'a> {
         self
     }
 
+    pub fn spawn_id(mut self, id: i32) -> Self {
+        self.spawn_id = id;
+        self
+    }
+
     pub(crate) fn serialize<'fb>(
         &self,
         builder: &mut FlatBufferBuilder<'fb>,
@@ -332,6 +397,7 @@ impl<'a> PlayerConfiguration<'a> {
             name: Some(builder.create_string(self.name)),
             team: self.team,
             loadout: Some(self.loadout.build(builder)),
+            spawnId: self.spawn_id,
         };
         flat::PlayerConfiguration::create(builder, &args)
     }
