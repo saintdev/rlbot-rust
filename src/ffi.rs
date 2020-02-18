@@ -530,7 +530,7 @@ pub type CallbackFunction = ::std::option::Option<
     unsafe extern "C" fn(id: ::std::os::raw::c_uint, status: RLBotCoreStatus),
 >;
 #[repr(C)]
-#[derive(Debug, Copy, Clone)]
+#[derive(Debug)]
 pub struct ByteBuffer {
     pub ptr: *mut ::std::os::raw::c_void,
     pub size: ::std::os::raw::c_int,

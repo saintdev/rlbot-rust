@@ -28,6 +28,7 @@ ffi: cpp/rlbot.hpp
 		--whitelist-type RigidBodyTick \
 		--whitelist-type QuickChatPreset \
 		--whitelist-type CallbackFunction \
+		--no-copy ByteBuffer \
 		$< \
 		-- \
 		-fdeclspec \

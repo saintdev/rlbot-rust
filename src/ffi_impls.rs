@@ -77,8 +77,8 @@ impl ffi::PlayerConfiguration {
     }
 }
 
-impl From<ByteBuffer> for Option<Vec<u8>> {
-    fn from(byte_buffer: ByteBuffer) -> Self {
+impl From<&ByteBuffer> for Option<Vec<u8>> {
+    fn from(byte_buffer: &ByteBuffer) -> Self {
         let len = byte_buffer.size as usize;
         if len == 0 || byte_buffer.ptr.is_null() {
             return None;

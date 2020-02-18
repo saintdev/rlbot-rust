@@ -84,7 +84,7 @@ impl RLBotCoreInterface {
         T: Fn() -> ByteBuffer,
     {
         let byte_buffer = f();
-        let ret = byte_buffer.into();
+        let ret = (&byte_buffer).into();
         (self.free)(byte_buffer.ptr);
 
         ret
