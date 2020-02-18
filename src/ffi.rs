@@ -3,7 +3,7 @@
 #![allow(non_camel_case_types, non_snake_case, missing_docs)]
 
 #[repr(C)]
-#[derive(Debug, Copy, Clone)]
+#[derive(Debug)]
 pub struct ByteBuffer {
     pub ptr: *mut ::std::os::raw::c_void,
     pub size: ::std::os::raw::c_int,
