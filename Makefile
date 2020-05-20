@@ -7,7 +7,9 @@ help:
 	@echo "    ffi        Generate ffi bindings from RLBot headers using rust-bindgen"
 	@echo "    fbs        Generate Flatbuffer bindings"
 
-.PHONY: fbs ffi help
+.PHONY: bindings fbs ffi help
+
+bindings: ffi fbs
 
 src/ffi.rs: ffi
 
