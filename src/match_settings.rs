@@ -103,6 +103,8 @@ pub struct PlayerLoadout {
     trails_id: i32,
     goal_explosion_id: i32,
     loadout_paint: LoadoutPaint,
+    primary_color: Option<Color>,
+    secondary_color: Option<Color>,
 }
 
 impl PlayerLoadout {
@@ -180,6 +182,16 @@ impl PlayerLoadout {
         self
     }
 
+    pub fn primary_color(mut self, color: Color) -> Self {
+        self.primary_color = Some(color);
+        self
+    }
+
+    pub fn secondary_color(mut self, color: Color) -> Self {
+        self.secondary_color = Some(color);
+        self
+    }
+
     pub(crate) fn build<'fb>(
         &self,
         builder: &mut FlatBufferBuilder<'fb>,
@@ -199,6 +211,8 @@ impl PlayerLoadout {
             trailsId: self.trails_id,
             goalExplosionId: self.goal_explosion_id,
             loadoutPaint: Some(self.loadout_paint.build(builder)),
+            primaryColorLookup: self.primary_color.as_ref().map(|c| c.build(builder)),
+            secondaryColorLookup: self.secondary_color.as_ref().map(|c| c.build(builder)),
         };
         flat::PlayerLoadout::create(builder, &args)
     }
@@ -280,6 +294,50 @@ impl LoadoutPaint {
     }
 }
 
+#[derive(Default, Clone)]
+pub struct Color {
+    a: u8,
+    r: u8,
+    g: u8,
+    b: u8,
+}
+
+impl Color {
+    pub fn new() -> Self {
+        Self::default()
+    }
+
+    pub fn alpha(mut self, value: u8) -> Self {
+        self.a = value;
+        self
+    }
+
+    pub fn red(mut self, value: u8) -> Self {
+        self.r = value;
+        self
+    }
+
+    pub fn green(mut self, value: u8) -> Self {
+        self.g = value;
+        self
+    }
+
+    pub fn blue(mut self, value: u8) -> Self {
+        self.b = value;
+        self
+    }
+
+    fn build<'fb>(&self, builder: &mut FlatBufferBuilder<'fb>) -> WIPOffset<flat::Color<'fb>> {
+        let args = flat::ColorArgs {
+            a: self.a,
+            r: self.r,
+            g: self.g,
+            b: self.b,
+        };
+        flat::Color::create(builder, &args)
+    }
+}
+
 /// Describes one of the players in a match.
 #[derive(Clone)]
 pub struct PlayerConfiguration<'a> {
@@ -287,6 +345,7 @@ pub struct PlayerConfiguration<'a> {
     pub name: &'a str,
     pub team: i32,
     pub loadout: PlayerLoadout,
+    pub spawn_id: i32,
     _non_exhaustive: (),
 }
 
@@ -297,6 +356,7 @@ impl<'a> PlayerConfiguration<'a> {
             name,
             team,
             loadout: PlayerLoadout::default(),
+            spawn_id: 0,
             _non_exhaustive: (),
         }
     }
@@ -321,6 +381,11 @@ impl<'a> PlayerConfiguration<'a> {
         self
     }
 
+    pub fn spawn_id(mut self, id: i32) -> Self {
+        self.spawn_id = id;
+        self
+    }
+
     pub(crate) fn serialize<'fb>(
         &self,
         builder: &mut FlatBufferBuilder<'fb>,
@@ -332,6 +397,7 @@ impl<'a> PlayerConfiguration<'a> {
             name: Some(builder.create_string(self.name)),
             team: self.team,
             loadout: Some(self.loadout.build(builder)),
+            spawnId: self.spawn_id,
         };
         flat::PlayerConfiguration::create(builder, &args)
     }
@@ -505,6 +571,9 @@ pub struct MatchSettings<'a> {
     pub skip_replays: bool,
     pub instant_start: bool,
     pub mutator_settings: MutatorSettings,
+    pub enable_rendering: bool,
+    pub enable_state_setting: bool,
+    pub auto_save_replay: bool,
     _non_exhaustive: (),
 }
 
@@ -517,6 +586,9 @@ impl<'a> Default for MatchSettings<'a> {
             skip_replays: false,
             instant_start: false,
             mutator_settings: Default::default(),
+            enable_rendering: true,
+            enable_state_setting: true,
+            auto_save_replay: false,
             _non_exhaustive: (),
         }
     }
@@ -585,6 +657,21 @@ impl<'a> MatchSettings<'a> {
         self
     }
 
+    pub fn enable_rendering(mut self, enable_rendering: bool) -> Self {
+        self.enable_rendering = enable_rendering;
+        self
+    }
+
+    pub fn enable_state_setting(mut self, enable_state_setting: bool) -> Self {
+        self.enable_state_setting = enable_state_setting;
+        self
+    }
+
+    pub fn auto_save_replay(mut self, auto_save_replay: bool) -> Self {
+        self.auto_save_replay = auto_save_replay;
+        self
+    }
+
     pub(crate) fn build(&self) -> FlatBufferBuilder<'_> {
         let mut builder = FlatBufferBuilder::new_with_capacity(1024);
 
@@ -602,6 +689,9 @@ impl<'a> MatchSettings<'a> {
             mutatorSettings: Some(self.mutator_settings.build(&mut builder)),
             existingMatchBehavior: ExistingMatchBehavior::Restart_If_Different,
             enableLockstep: false,
+            enableRendering: self.enable_rendering,
+            enableStateSetting: self.enable_state_setting,
+            autoSaveReplay: self.auto_save_replay,
         };
         let root = flat::MatchSettings::create(&mut builder, &args);
 
