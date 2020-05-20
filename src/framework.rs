@@ -109,7 +109,6 @@ fn parse_framework_command_line(
         rlbot_version,
         rlbot_dll_directory,
         player_index,
-        _non_exhaustive: (),
     }))
 }
 
@@ -131,6 +130,7 @@ pub fn parse_version_and_directory(
 }
 
 /// The arguments passed by the RLBot framework.
+#[non_exhaustive]
 pub struct FrameworkArgs {
     /// The version of the RLBot framework used to launch the app. This is the
     /// same as the version shown when you run this Python code:
@@ -148,8 +148,6 @@ pub struct FrameworkArgs {
     /// The index of the player you're controlling in the
     /// [`LiveDataPacket::GameCars`](ffi::LiveDataPacket::GameCars) array.
     pub player_index: i32,
-
-    _non_exhaustive: (),
 }
 
 impl From<FrameworkArgs> for InitOptions {

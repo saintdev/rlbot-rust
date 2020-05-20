@@ -340,13 +340,13 @@ impl Color {
 
 /// Describes one of the players in a match.
 #[derive(Clone)]
+#[non_exhaustive]
 pub struct PlayerConfiguration<'a> {
     pub variety: PlayerClass,
     pub name: &'a str,
     pub team: i32,
     pub loadout: PlayerLoadout,
     pub spawn_id: i32,
-    _non_exhaustive: (),
 }
 
 impl<'a> PlayerConfiguration<'a> {
@@ -357,7 +357,6 @@ impl<'a> PlayerConfiguration<'a> {
             team,
             loadout: PlayerLoadout::default(),
             spawn_id: 0,
-            _non_exhaustive: (),
         }
     }
 
@@ -404,6 +403,7 @@ impl<'a> PlayerConfiguration<'a> {
 }
 
 #[derive(Clone)]
+#[non_exhaustive]
 pub struct MutatorSettings {
     pub match_length: MatchLength,
     pub max_score: MaxScore,
@@ -421,7 +421,6 @@ pub struct MutatorSettings {
     pub gravity_option: GravityOption,
     pub demolish_option: DemolishOption,
     pub respawn_time_option: RespawnTimeOption,
-    _non_exhaustive: (),
 }
 
 impl Default for MutatorSettings {
@@ -443,7 +442,6 @@ impl Default for MutatorSettings {
             gravity_option: GravityOption::Default,
             demolish_option: DemolishOption::Default,
             respawn_time_option: RespawnTimeOption::Three_Seconds,
-            _non_exhaustive: (),
         }
     }
 }
@@ -564,6 +562,7 @@ impl MutatorSettings {
 /// Pass this to [`RLBot::start_match`](crate::RLBot::start_match)` to make the
 /// magic happen.
 #[derive(Clone)]
+#[non_exhaustive]
 pub struct MatchSettings<'a> {
     pub player_configurations: Vec<PlayerConfiguration<'a>>,
     pub game_mode: GameMode,
@@ -574,7 +573,6 @@ pub struct MatchSettings<'a> {
     pub enable_rendering: bool,
     pub enable_state_setting: bool,
     pub auto_save_replay: bool,
-    _non_exhaustive: (),
 }
 
 impl<'a> Default for MatchSettings<'a> {
@@ -589,7 +587,6 @@ impl<'a> Default for MatchSettings<'a> {
             enable_rendering: true,
             enable_state_setting: true,
             auto_save_replay: false,
-            _non_exhaustive: (),
         }
     }
 }

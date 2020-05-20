@@ -115,11 +115,11 @@ fn parse_framework_command_line(
         rlbot_version,
         rlbot_dll_directory,
         drone_indices,
-        _non_exhaustive: (),
     }))
 }
 
 /// The arguments passed by the RLBot framework for a hivemind.
+#[non_exhaustive]
 pub struct HiveFrameworkArgs {
     /// The version of the RLBot framework used to launch the app. This is the
     /// same as the version shown when you run this Python code:
@@ -136,8 +136,6 @@ pub struct HiveFrameworkArgs {
 
     /// The indices of the bots you are controlling.
     pub drone_indices: Vec<i32>,
-
-    _non_exhaustive: (),
 }
 
 impl From<&HiveFrameworkArgs> for InitOptions {

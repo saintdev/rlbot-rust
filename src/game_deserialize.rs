@@ -33,7 +33,6 @@ impl From<flat::GameTickPacket<'_>> for GameTickPacket {
             teams: flat_vector_iter(packet.teams().unwrap())
                 .map(TeamInfo::from)
                 .collect(),
-            _non_exhaustive: (),
         }
     }
 }
@@ -52,7 +51,6 @@ impl From<flat::PlayerInfo<'_>> for PlayerInfo {
             name: info.name().unwrap().to_string(),
             team: info.team(),
             boost: info.boost(),
-            _non_exhaustive: (),
         }
     }
 }
@@ -62,7 +60,6 @@ impl From<flat::BoostPadState<'_>> for BoostPadState {
         Self {
             is_active: state.isActive(),
             timer: state.timer(),
-            _non_exhaustive: (),
         }
     }
 }
@@ -73,7 +70,6 @@ impl From<flat::BallInfo<'_>> for BallInfo {
             physics: info.physics().unwrap().into(),
             latest_touch: info.latestTouch().map(Touch::from),
             dropshot_info: info.dropShotInfo().map(DropshotBallInfo::from),
-            _non_exhaustive: (),
         }
     }
 }
@@ -85,7 +81,6 @@ impl From<flat::Physics<'_>> for Physics {
             rotation: physics.rotation().map_or(Rotator::default(), Rotator::from),
             velocity: physics.velocity().unwrap().into(),
             angular_velocity: physics.angularVelocity().unwrap().into(),
-            _non_exhaustive: (),
         }
     }
 }
@@ -129,7 +124,6 @@ impl From<flat::Touch<'_>> for Touch {
             location: touch.location().unwrap().into(),
             normal: touch.normal().unwrap().into(),
             team: touch.team(),
-            _non_exhaustive: (),
         }
     }
 }
@@ -140,7 +134,6 @@ impl From<flat::DropShotBallInfo<'_>> for DropshotBallInfo {
             absorbed_force: info.absorbedForce(),
             damage_index: info.damageIndex(),
             force_accum_recent: info.forceAccumRecent(),
-            _non_exhaustive: (),
         }
     }
 }
@@ -157,7 +150,6 @@ impl From<flat::GameInfo<'_>> for GameInfo {
             is_match_ended: info.isMatchEnded(),
             world_gravity_z: info.worldGravityZ(),
             game_speed: info.gameSpeed(),
-            _non_exhaustive: (),
         }
     }
 }
@@ -166,7 +158,6 @@ impl From<flat::DropshotTile<'_>> for DropshotTile {
     fn from(tile: flat::DropshotTile<'_>) -> Self {
         Self {
             tile_state: tile.tileState(),
-            _non_exhaustive: (),
         }
     }
 }
@@ -176,7 +167,6 @@ impl From<flat::TeamInfo<'_>> for TeamInfo {
         Self {
             team_index: info.teamIndex(),
             score: info.score(),
-            _non_exhaustive: (),
         }
     }
 }
@@ -191,7 +181,6 @@ impl From<flat::ScoreInfo<'_>> for ScoreInfo {
             saves: info.saves(),
             shots: info.shots(),
             demolitions: info.demolitions(),
-            _non_exhaustive: (),
         }
     }
 }
@@ -202,7 +191,6 @@ impl From<flat::GoalInfo<'_>> for GoalInfo {
             team_num: goal_info.teamNum(),
             location: goal_info.location().unwrap().into(),
             direction: goal_info.direction().unwrap().into(),
-            _non_exhaustive: (),
         }
     }
 }
@@ -212,7 +200,6 @@ impl From<flat::BoostPad<'_>> for BoostPad {
         Self {
             location: boost_pad.location().unwrap().into(),
             full_boost: boost_pad.isFullBoost(),
-            _non_exhaustive: (),
         }
     }
 }
@@ -226,7 +213,6 @@ impl From<flat::FieldInfo<'_>> for FieldInfo {
             goals: flat_vector_iter(info.goals().unwrap())
                 .map(GoalInfo::from)
                 .collect(),
-            _non_exhaustive: (),
         }
     }
 }
@@ -239,7 +225,6 @@ impl From<flat::RigidBodyState<'_>> for RigidBodyState {
             rotation: state.rotation().unwrap().into(),
             velocity: state.velocity().unwrap().into(),
             angular_velocity: state.angularVelocity().unwrap().into(),
-            _non_exhaustive: (),
         }
     }
 }
@@ -249,7 +234,6 @@ impl From<flat::PlayerRigidBodyState<'_>> for PlayerRigidBodyState {
         Self {
             state: state.state().unwrap().into(),
             input: state.input().unwrap().into(),
-            _non_exhaustive: (),
         }
     }
 }
@@ -258,7 +242,6 @@ impl From<flat::BallRigidBodyState<'_>> for BallRigidBodyState {
     fn from(state: flat::BallRigidBodyState<'_>) -> Self {
         Self {
             state: state.state().map(RigidBodyState::from),
-            _non_exhaustive: (),
         }
     }
 }
@@ -270,7 +253,6 @@ impl From<flat::RigidBodyTick<'_>> for RigidBodyTick {
             players: flat_vector_iter(tick.players().unwrap())
                 .map(PlayerRigidBodyState::from)
                 .collect(),
-            _non_exhaustive: (),
         }
     }
 }
@@ -280,7 +262,6 @@ impl From<flat::PredictionSlice<'_>> for PredictionSlice {
         Self {
             game_seconds: slice.gameSeconds(),
             physics: slice.physics().unwrap().into(),
-            _non_exhaustive: (),
         }
     }
 }
@@ -291,7 +272,6 @@ impl From<flat::BallPrediction<'_>> for BallPrediction {
             slices: flat_vector_iter(ball_prediction.slices().unwrap())
                 .map(PredictionSlice::from)
                 .collect(),
-            _non_exhaustive: (),
         }
     }
 }

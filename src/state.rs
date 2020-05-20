@@ -8,6 +8,7 @@ use crate::{
 
 /// Represents a vector in 3D space.
 #[derive(Clone, Default)]
+#[non_exhaustive]
 pub struct Vector3Partial {
     /// The X coordinate.
     pub x: Option<f32>,
@@ -15,7 +16,6 @@ pub struct Vector3Partial {
     pub y: Option<f32>,
     /// The Z coordinate.
     pub z: Option<f32>,
-    non_exhaustive: (),
 }
 
 impl Vector3Partial {
@@ -60,6 +60,7 @@ impl Vector3Partial {
 
 /// A rotation in 3D space represented by Euler angles.
 #[derive(Clone, Default)]
+#[non_exhaustive]
 pub struct RotatorPartial {
     /// The pitch.
     pub pitch: Option<f32>,
@@ -67,7 +68,6 @@ pub struct RotatorPartial {
     pub yaw: Option<f32>,
     /// The roll.
     pub roll: Option<f32>,
-    non_exhaustive: (),
 }
 
 impl RotatorPartial {
@@ -112,6 +112,7 @@ impl RotatorPartial {
 
 /// Rigid-body state which can be set.
 #[derive(Clone, Default)]
+#[non_exhaustive]
 pub struct DesiredPhysics {
     /// The location of the rigid body.
     pub location: Option<Vector3Partial>,
@@ -121,7 +122,6 @@ pub struct DesiredPhysics {
     pub velocity: Option<Vector3Partial>,
     /// The angular velocity of the rigid body.
     pub angular_velocity: Option<Vector3Partial>,
-    non_exhaustive: (),
 }
 
 impl DesiredPhysics {
@@ -170,10 +170,10 @@ impl DesiredPhysics {
 
 /// State which can be set on the ball.
 #[derive(Clone, Default)]
+#[non_exhaustive]
 pub struct DesiredBallState {
     /// The ball's physics.
     pub physics: Option<DesiredPhysics>,
-    non_exhaustive: (),
 }
 
 impl DesiredBallState {
@@ -201,6 +201,7 @@ impl DesiredBallState {
 
 /// State which can be set on a car.
 #[derive(Clone, Default)]
+#[non_exhaustive]
 pub struct DesiredCarState {
     /// The car's physics.
     pub physics: Option<DesiredPhysics>,
@@ -210,7 +211,6 @@ pub struct DesiredCarState {
     pub jumped: Option<bool>,
     /// Whether the car has used its second jump.
     pub double_jumped: Option<bool>,
-    non_exhaustive: (),
 }
 
 impl DesiredCarState {
@@ -262,10 +262,10 @@ impl DesiredCarState {
 
 /// State which can be set for a boost pickup.
 #[derive(Clone, Default)]
+#[non_exhaustive]
 pub struct DesiredBoostState {
     /// The amount of time until the boost pickup respawns.
     pub respawn_time: Option<f32>,
-    non_exhaustive: (),
 }
 
 impl DesiredBoostState {
@@ -294,6 +294,7 @@ impl DesiredBoostState {
 
 /// State which can be set for a boost pickup.
 #[derive(Clone, Default)]
+#[non_exhaustive]
 pub struct DesiredGameInfoState {
     /// The gravity acceleration.
     pub world_gravity_z: Option<f32>,
@@ -303,7 +304,6 @@ pub struct DesiredGameInfoState {
     pub paused: Option<bool>,
     /// End the current match
     pub end_match: Option<bool>,
-    non_exhaustive: (),
 }
 
 impl DesiredGameInfoState {
@@ -360,6 +360,7 @@ impl DesiredGameInfoState {
 /// [`RLBot::set_game_state_struct`](crate::RLBot::set_game_state_struct) to
 /// make the magic happen.
 #[derive(Clone, Default)]
+#[non_exhaustive]
 pub struct DesiredGameState {
     /// The state of the ball.
     pub ball_state: Option<DesiredBallState>,
@@ -369,7 +370,6 @@ pub struct DesiredGameState {
     pub boost_states: Vec<Option<DesiredBoostState>>,
     /// The state of the game environment.
     pub game_info_state: Option<DesiredGameInfoState>,
-    non_exhaustive: (),
 }
 
 impl DesiredGameState {
