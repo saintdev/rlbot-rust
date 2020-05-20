@@ -80,7 +80,7 @@ impl<'a> Packeteer<'a> {
             .interface()
             .update_live_data_packet(&mut packet)?;
 
-        let game_time = packet.GameInfo.TimeSeconds;
+        let game_time = packet.gameInfo.timeSeconds;
         if game_time != self.prev_game_time {
             self.prev_game_time = game_time;
             Ok(Some(packet))

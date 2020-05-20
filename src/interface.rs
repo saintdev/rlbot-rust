@@ -1,8 +1,5 @@
 use crate::{dll::RLBotCoreInterface, error::RLBotError, ffi, flat, game::*};
-use std::{
-    os::raw::{c_int, c_void},
-    ptr::null_mut,
-};
+use std::os::raw::{c_int, c_void};
 
 pub struct RLBotInterface {
     dll: RLBotCoreInterface,
@@ -83,7 +80,7 @@ impl RLBotInterface {
         note = "the struct-based methods are deprecated; use the flatbuffer equivalents instead"
     )]
     pub fn start_match(&self, match_settings: ffi::MatchSettings) -> Result<(), RLBotError> {
-        let status = (self.dll.start_match)(match_settings, None, null_mut());
+        let status = (self.dll.start_match)(match_settings);
         core_result(status)
     }
 
