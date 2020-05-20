@@ -7,7 +7,7 @@ help:
 	@echo "    ffi        Generate ffi bindings from RLBot headers using rust-bindgen"
 	@echo "    fbs        Generate Flatbuffer bindings"
 
-.PHONY: bindings fbs ffi help
+.PHONY: bindings fbs ffi signatures help
 
 bindings: ffi fbs
 
@@ -50,3 +50,38 @@ fbs: $(RLBOT_DIR)/src/main/flatbuffers/rlbot.fbs
 		$<
 	cargo fix --allow-dirty
 	cargo +nightly fmt
+
+signatures: cpp/rlbot.hpp
+	bindgen \
+		--disable-name-namespacing \
+		--no-layout-tests \
+		--with-derive-default \
+		--default-enum-style rust \
+		--output function_signatures_generated.rs \
+		--whitelist-function BallPrediction::GetBallPrediction \
+		--whitelist-function BallPrediction::GetBallPredictionStruct \
+		--whitelist-function GameFunctions::Free \
+		--whitelist-function GameFunctions::SetGameState \
+		--whitelist-function GameFunctions::StartMatch \
+		--whitelist-function GameFunctions::StartMatchFlatbuffer \
+		--whitelist-function GameFunctions::UpdateFieldInfoFlatbuffer \
+		--whitelist-function GameFunctions::UpdateFieldInfo \
+		--whitelist-function GameFunctions::UpdateLiveDataPacketFlatbuffer \
+		--whitelist-function GameFunctions::UpdateLiveDataPacket \
+		--whitelist-function GameFunctions::UpdateRigidBodyTickFlatbuffer \
+		--whitelist-function GameFunctions::UpdateRigidBodyTick \
+		--whitelist-function GameFunctions::SendQuickChat \
+		--whitelist-function GameFunctions::SendChat \
+		--whitelist-function GameFunctions::UpdatePlayerInput \
+		--whitelist-function GameFunctions::UpdatePlayerInputFlatbuffer \
+		--whitelist-function Interface::IsInitialized \
+		--whitelist-function RenderFunctions::RenderGroup \
+		--generate functions \
+		$< \
+		-- \
+		-fdeclspec \
+		-x c++ \
+		-std=c++17 \
+		-I "$(RLBOT_DIR)"/src/main/cpp/RLBotInterface/src/RLBotInterface \
+		-I "$(RLBOT_DIR)"/src/main/cpp/RLBotInterface/src/RLBotMessages \
+		-I "$(RLBOT_DIR)"/src/generated/cpp/flatbuffers
